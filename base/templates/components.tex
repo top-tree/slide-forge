@@ -1,0 +1,191 @@
+% ============================================================
+% base/templates/components.tex   内置组件（基线 · 仓库里的源）
+%
+% 页面文件只允许使用本文件里的命令 + 纯文本。
+% 出现 \fontsize / \vspace / \setbeamercolor 就是设计债，
+% 应该加组件，而不是在页面里写样式。
+%
+% 【这份文件不参与 deck 编译】
+%   新建 deck 时只复制 `style.tex`、`main.tex`、`pages/`。
+%   本文件与 format.tex 留在 skill 里，是给 deck**抄**的源：
+%   deck 的 style.tex 自带等价内容，并另加载本 deck 的 .slide-forge/。
+%
+% 【要新增组件写到哪】
+%   <deck>/slide/.slide-forge/templates/components.tex   ← 自动生成，不用问用户
+%   evolved/templates/components.tex                     ← 吸收，用户点头后才做
+%   本文件：只有用户明确同意"升入基线"时才动。
+% ============================================================
+
+% ============================================================
+% 页面骨架
+% ============================================================
+
+% --- 有标题页：标题由 main.tex 给出，正文来自页面文件 ---
+\newcommand{\DeckSlide}[2]{%
+  \begin{frame}[t]{#1}%
+    \vspace*{\SlideBodyTopSkip}%
+    \input{#2}%
+  \end{frame}%
+}
+
+% --- 无标题页：封面与致谢页用 ---
+% #1 内容文件，#2 垂直对齐（c 居中 / t 顶对齐）
+%
+% 这两页不要页标题：封面本来就该是整页一块，致谢页只有两个字，
+% 再顶一个页标题会显得多余、也会和正文页混淆。
+% 做法是在这一页把 frametitle 模板清空（模板是局部的，不影响其他页），
+% 内容用 \vfill 上下撑开，从而垂直居中。
+\newcommand{\DeckBare}[2]{%
+  \begin{frame}[#2]%
+    \setbeamertemplate{frametitle}{}%
+    \input{#1}%
+  \end{frame}%
+}
+
+% ============================================================
+% 正文行与分组
+% ============================================================
+
+% --- 正文行：全页只有这一种行 ---
+% 姓名、单位、每一条要点，全部用同一个命令，因此字号、行距、
+% 字重、颜色必然完全一致 —— 从代码层面就不可能出现不一致。
+% 不要为"姓名"或"要点"另建命令：两个命令意味着两套样式，
+% 迟早会写出不一样的效果。一个命令，一个样式。
+\newcommand{\DeckLine}[1]{%
+  \par
+  \hangindent=1.1em\hangafter=1
+  \noindent #1\par
+  \vspace{0.30cm}%
+}
+
+% --- 分组留白 ---
+% 唯一用来分组的手段：在两组信息之间插入一次更大的空白。
+% 不用分隔线、不用小标题、不用字号差异。
+\newcommand{\DeckGap}{%
+  \par\vspace*{0.40cm}%
+}
+
+% --- 带时间标签的行 ---
+% #1 时间标签，#2 内容
+%
+% 不用空格去凑对齐：标签字数不等（"大二寒假" 4 字、"本学期" 3 字），
+% 手打空格永远对不齐，而且全角/半角混用会更乱。
+% 这里用一个固定宽度的盒子把标签撑到统一宽度，内容自然左对齐。
+\newlength{\DeckTagWidth}
+\setlength{\DeckTagWidth}{5.6em}   % 约容纳 5 个全角字符
+\newcommand{\DeckTagged}[2]{%
+  \DeckLine{\makebox[\DeckTagWidth][l]{#1}#2}%
+}
+
+% ============================================================
+% 条目（带链接）
+% ============================================================
+
+% --- 条目：一条两行（标题行 + 说明行）---
+% #1 标题行（可内嵌 \DeckLink 让标题本身可点），#2 说明行（角色 / 出处）
+% 两行之间比 \DeckLine 更紧（0.12cm），让它们读作一条完整记录；
+% 条目之间用 0.34cm 拉开。标题折行时第二行与首行文字左对齐。
+\newcommand{\DeckCite}[2]{%
+  \par
+  \hangindent=1.1em\hangafter=1
+  \noindent #1\par
+  \vspace{0.12cm}%
+  \noindent #2\par
+  \vspace{0.34cm}%
+}
+
+% --- 超链接 ---
+% beamer 已加载 hyperref，直接用 \href。
+% 颜色用强调色，不加下划线边框（hyperref 的默认方框很难看）。
+\newcommand{\DeckLink}[2]{%
+  \href{#1}{\color{SlideAccent}#2}%
+}
+
+% ============================================================
+% 表格
+% ============================================================
+
+% --- 表格行距（可调旋钮）---
+% 默认值 = 正文行距，因此表格与正文看起来是一套节奏。
+% 某页需要更紧或更松时，在该页文件开头改这一个长度即可：
+%     \setlength{\DeckTableLeading}{14pt}
+% 注意：字号不在这里调。字号只有两档，全篇一致，不允许逐页改动。
+\newlength{\DeckTableLeading}
+\setlength{\DeckTableLeading}{\baselineskip}
+
+% --- 数值表：「名称占满 + 数值右对齐」---
+% #1 表体：名称 & 数值 \\
+% 表宽自动等于 \linewidth。表内文字用 \SlideTextFont，字号与正文一致；
+% 层次只靠加粗（列头）与列间距。不画竖线、不画外框。
+\newcommand{\DeckCourseTable}[1]{%
+  \par\noindent
+  {\SlideTextFont
+   \setlength{\baselineskip}{\DeckTableLeading}%
+   \setlength{\tabcolsep}{0pt}%
+   \renewcommand{\arraystretch}{1.0}%
+   \noindent
+   \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X@{\hspace{0.16cm}}r@{}}
+     #1
+   \end{tabularx}}%
+  \par
+}
+
+% --- 列表式两列表：「窄标签左 + 长文字占满左对齐」---
+% 与 \DeckCourseTable 的区别只在列宽分配方向：
+%   数值表是「名称占满、数值右对齐」；
+%   本表是「短标签在左（窄）、长文字在右（占满、左对齐）」。
+% 年份 + 描述、时间线这类内容用这个，
+% 否则描述会被右对齐得零碎，且长条目会溢出列宽。
+\newcommand{\DeckListTable}[1]{%
+  \par\noindent
+  {\SlideTextFont
+   \setlength{\baselineskip}{\DeckTableLeading}%
+   \setlength{\tabcolsep}{0pt}%
+   \renewcommand{\arraystretch}{1.0}%
+   \noindent
+   \begin{tabularx}{\linewidth}{@{}l@{\hspace{0.55cm}}>{\raggedright\arraybackslash}X@{}}
+     #1
+   \end{tabularx}}%
+  \par
+}
+
+% --- 表头与细线 ---
+% 表头行：与正文同字号，只靠加粗区分
+\newcommand{\DeckCourseHead}[2]{%
+  \textbf{#1} & \textbf{#2} \\[0.04cm]
+}
+% 列表式表头
+\newcommand{\DeckListHead}[2]{%
+  \textbf{#1} & \textbf{#2} \\[0.04cm]
+}
+% 列头与第一行数据之间的细线。
+% 用 \noalign 单独发 \hrule，避免 \hline\noalign 给表格带来的异常深度
+% （实测那一手会让 5 行表的深度变成 77pt）。
+\newcommand{\DeckCourseRule}{%
+  \noalign{\vspace{0.09cm}\hrule height 0.4pt\vspace{0.13cm}}%
+}
+
+% ============================================================
+% 图片
+% ============================================================
+
+% --- 两图并排 ---
+% #1 左图路径，#2 右图路径，#3 左图高度，#4 右图宽度
+%
+% 不用 beamer 的 columns：它的栏间距会与给定宽度叠加，很难算准，
+% 几次都报 Overfull。改成两图放在同一行、用 \hfill 撑开，
+% 宽度完全由 \includegraphics 的 height/width 决定，可控。
+%
+% \includegraphics 的 width/height 是"缩放后"尺寸：只给 height 时，
+% 宽度按原图比例推算，所以两张图若比例不同、都想等高，
+% 就必须给其中一张显式 width（调用方算好传入）。
+%
+% 关键约束：两图宽度之和必须明显小于正文宽（14.25cm），留 0.3cm 以上。
+% 只差 0.03cm 都会让第二张图被挤到下一行，并报 overfull vbox。
+\newcommand{\DeckFigures}[4]{%
+  \par\noindent
+  \includegraphics[height=#3]{#1}%
+  \hfill
+  \includegraphics[width=#4]{#2}%
+  \par
+}

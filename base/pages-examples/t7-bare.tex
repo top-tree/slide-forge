@@ -1,0 +1,25 @@
+% pages-examples/bare.tex   —— 配置⑦：无页标题页（封面 / 致谢类）
+%
+% 用于：封面、致谢、章节隔断——这类页面不该有左上角的页标题。
+%
+% 用法要点：
+%   - 在 main.tex 里用 \DeckBare{文件}{c}（c = 垂直居中，t = 顶对齐），
+%     而不是 \DeckSlide。\DeckBare 会在这一页把页标题模板清空
+%     （模板是局部的，不影响其他页）。
+%   - 内容用 \vfill 上下撑开实现垂直居中；\begin{center} 实现水平居中。
+%   - 主标题用 \SlideCoverFont（26pt），这是全篇唯一允许的第三档字号，
+%     只出现在封面与致谢页。正文页一律不用。
+%   - 副行用 \SlideTextFont（12pt），与正文同级。
+%   - 字号层级：主标题 26pt + 副行 12pt。中间如果还有一层（如姓名），
+%     用 \SlideTitleFont（20pt），不要新造字号。
+%   - 页面文件里直接写 {\SlideTextFont 内容} 即可，不需要额外命令。
+
+\vfill
+
+\begin{center}
+  {\SlideCoverFont\bfseries\color{SlideAccent}主标题}\par
+  \vspace{0.60cm}
+  {\SlideTextFont\color{SlideAccent}副行内容}\par
+\end{center}
+
+\vfill

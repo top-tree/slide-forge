@@ -1,0 +1,40 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+% ------------------------------------------------------------
+% main.tex    页面清单
+%
+% 编译：XeLaTeX（不需要 shell-escape）
+% TeXStudio 命令：xelatex -synctex=1 -interaction=nonstopmode %.tex
+%
+% 这个文件只回答一件事：有哪几页、按什么顺序。
+%   - 加一页：加一行 \DeckSlide{标题}{pages/NN-name.tex}
+%   - 换顺序：调换行的位置
+%   - 改外观：只改 style.tex，不要动这里
+%   - 改内容：只改 pages/*.tex
+%
+% 只改当前这一页时，可把其余 \DeckSlide 注释掉，编译会明显变快。
+%
+% ★ 编译时 cwd 必须是本目录（<项目>/slide/）。换成上级目录跑
+%   `xelatex slide\main.tex` 会停在 "File `style.tex' not found" ——
+%   TeX 的相对路径按 cwd 解析，不按 main.tex 的位置。详见
+%   references/typography.md 第七节。
+% ------------------------------------------------------------
+
+\documentclass[aspectratio=169,11pt]{ctexbeamer}
+
+% 内置基线 + 本 deck 的 .slide-forge/（可选层）。
+% 加载链与"放哪儿才算数"见 style.tex 头部注释。
+\input{style.tex}
+
+\begin{document}
+
+% 封面与致谢页用 \DeckBare（无页标题），内容文件里自己控制垂直居中
+\DeckBare{pages/00-cover.tex}{c}
+
+% ---- 正文页从这里开始，一个文件一页，顺序即页码顺序 ----
+% \DeckSlide{页面标题}{pages/01-first.tex}
+% \DeckSlide{页面标题}{pages/02-second.tex}
+
+\DeckBare{pages/10-thanks.tex}{c}
+
+\end{document}
