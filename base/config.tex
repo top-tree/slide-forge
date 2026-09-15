@@ -1,0 +1,43 @@
+% ============================================================
+% config.tex   —— deck 级配置 + 加载顺序
+%
+% 【这是什么】配置，不是逻辑。改它是**改值**，不是**改代码**。
+%   它随时可以被丢掉重新写一份 —— 所以它和 primitives 是两回事：
+%   config.tex 可再生，primitives.tex 不可再生。
+%
+% 【谁改它】换风格时改 \SlideActiveStyle 那一行。其余一个字都不用动。
+%   每个 deck 有自己的一份，所以 deck A 换风格不影响 deck B。
+%
+% 【为什么路径都带 .slide-forge/ 前缀】
+%   本文件在 <deck>/slide/.slide-forge/ 里，但编译时的 cwd 是
+%   <deck>/slide/（main.tex 所在处）—— TeX 的相对路径按 cwd 解析，
+%   不是按本文件的位置。所以下面每一条都要写全 .slide-forge/ 前缀。
+% ============================================================
+% 加载顺序：一条直线，每一步只依赖紧邻的上一层
+% ------------------------------------------------------------
+%   ① primitives.tex   工具箱：画一页的工具。**无依赖**
+%   ② styles/X.tex     风格：值 + 用值量出的容量。只依赖 ①
+%   ③ templates/*.tex  版式：搭出来的具体排法。只依赖 ②
+%
+%   为什么没有单独的"几何"文件：几何要用当前字体量字宽，没有字体量不出来，
+%   所以尺子天生坐在参数后面。把它拆出去会变成
+%   "primitives 与 styles 两个根汇合到 geometry"的菱形依赖。
+%   现在"量"就在 styles 文件末尾，依赖是一条链。
+% ============================================================
+
+% ---- ① 工具箱：原语（无依赖，不要动）----
+\input{.slide-forge/primitives.tex}
+
+% ---- ② 风格：值 + 容量。换一套就改这一行（styles/ 下的文件名，不带 .tex）----
+\newcommand{\SlideActiveStyle}{.slide-forge/styles/default}
+\input{\SlideActiveStyle.tex}
+
+% ---- ③ 版式：逐个加载，目录里多一个少一个都不报错 ----
+\IfFileExists{.slide-forge/templates/t00-core.tex}{\input{.slide-forge/templates/t00-core.tex}}{}
+\IfFileExists{.slide-forge/templates/t02-tagged.tex}{\input{.slide-forge/templates/t02-tagged.tex}}{}
+\IfFileExists{.slide-forge/templates/t03-table-value.tex}{\input{.slide-forge/templates/t03-table-value.tex}}{}
+\IfFileExists{.slide-forge/templates/t04-table-list.tex}{\input{.slide-forge/templates/t04-table-list.tex}}{}
+\IfFileExists{.slide-forge/templates/t05-cite.tex}{\input{.slide-forge/templates/t05-cite.tex}}{}
+\IfFileExists{.slide-forge/templates/t06-figures.tex}{\input{.slide-forge/templates/t06-figures.tex}}{}
+\IfFileExists{.slide-forge/templates/t08-cover.tex}{\input{.slide-forge/templates/t08-cover.tex}}{}
+\IfFileExists{.slide-forge/templates/t99-thanks.tex}{\input{.slide-forge/templates/t99-thanks.tex}}{}

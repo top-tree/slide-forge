@@ -1,0 +1,34 @@
+% ============================================================
+% templates/t06-figures.tex   —— T6 两图并排
+%
+% 适用场景：两张需要对比的图（前后对照、方案 A/B、原图与结果），
+%          等高、顶端对齐、水平居中。
+% 提供    ：\DeckFigures
+% 依赖    ：\includegraphics（graphicx，在 styles/ 里已加载）
+% 参数    ：#1 左图路径 #2 右图路径 #3 左图高度 #4 右图宽度
+% 容量    ：两图宽度之和**必须明显小于**版心宽，留 0.3cm 以上余量。
+%           版心宽用 \SlideTextWidth 查（由 styles/ 末尾的实测段定义）
+% 易错    ：① 只差 0.03cm 就会让第二张图掉到下一行，并报 **overfull vbox**
+%             ——报的是竖直溢出，看不出是宽度问题，极难查。留足余量
+%           ② 不要用 beamer 的 columns：它的栏间距会与给定宽度叠加，
+%             试三次都算不准
+%           ③ 等高要靠显式 width：\includegraphics[height=H] 的宽度按
+%             原图比例推算。两张图比例不同又都想等高时，必须给其中一张
+%             显式 width（= H × 该图宽/该图高），调用方算好传入
+%           ④ 原图先缩放：手机拍的动辄 4000+ 像素，直接入稿会让 PDF
+%             膨胀到几十 MB。先缩到长边约 2400px
+%
+% 【填满的样子】（两图宽度之和 4.5 + 7.0 = 11.5cm，明显小于版心宽）
+%   \DeckFigures{figures/before.png}{figures/after.png}{4.5cm}{7.0cm}
+% ============================================================
+
+% --- 两图并排 ---
+% 不用 beamer 的 columns：它的栏间距会与给定宽度叠加，很难算准。
+% 改成两图放在同一行、用 \hfill 撑开，宽度完全可控。
+\DeckDefine{\DeckFigures}[4]{%
+  \par\noindent
+  \includegraphics[height=#3]{#1}%
+  \hfill
+  \includegraphics[width=#4]{#2}%
+  \par
+}

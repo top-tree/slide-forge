@@ -1,0 +1,46 @@
+% ============================================================
+% templates/t03-table-value.tex   —— T3 名称—数值表
+%
+% 适用场景：**长名称 + 短数值**的对齐成表。成绩、指标、预算、对比数据。
+%          数值右对齐，这样小数点位置自然对齐、一眼能比大小。
+% 提供    ：\DeckCourseTable \DeckCourseHead
+% 依赖    ：\DeckCourseRule（primitives.tex）、\DeckTableLeading（风格）
+% 参数    ：表体写成 `名称 & 数值 \\` 的形式，交给 \DeckCourseTable
+% 容量    ：一页最多 5 行数据 + 表头
+%           名称列一行 = \SlideLineUnitsSafe - 6 个全角字
+%           （数值列要留位置，扣掉 6 个字宽）
+% 易错    ：① 表宽自动等于 \linewidth，**不要手写 p{9.40cm} 这类固定宽度** ——
+%             算错总宽会溢出页面，而且溢出量恰好等于算错的那部分
+%           ② 列宽方向别用错：本模板是"名称占满 + 数值右对齐"。
+%             长文字要左对齐的话用 T4，用错会把长文字右对齐得支离破碎
+%           ③ 画表头下的线用 \DeckCourseRule，**不要用 \hline\noalign** ——
+%             实测那一手会让 5 行表的深度变成 77pt
+%
+% 【填满的样子】
+%   \DeckCourseTable{%
+%     \DeckCourseHead{课程}{学分}%
+%     \DeckCourseRule
+%     高等数学 & 5 \\
+%     线性代数 & 3 \\
+%   }
+% ============================================================
+
+% --- 数值表：「名称占满 + 数值右对齐」---
+% 表宽自动等于 \linewidth。不画竖线、不画外框。
+\DeckDefine{\DeckCourseTable}[1]{%
+  \par\noindent
+  {\SlideTextFont
+   \setlength{\baselineskip}{\DeckTableLeading}%
+   \setlength{\tabcolsep}{0pt}%
+   \renewcommand{\arraystretch}{1.0}%
+   \noindent
+   \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X@{\hspace{0.16cm}}r@{}}
+     #1
+   \end{tabularx}}%
+  \par
+}
+
+% --- 表头行：与正文同字号，只靠加粗区分 ---
+\DeckDefine{\DeckCourseHead}[2]{%
+  \textbf{#1} & \textbf{#2} \\[0.04cm]
+}

@@ -1,0 +1,46 @@
+% ============================================================
+% templates/t04-table-list.tex   —— T4 标签—长文字表
+%
+% 适用场景：**窄标签 + 长文字**，标签列左对齐、文字列占满并左对齐。
+%          奖项、事件、职责、条目式的清单。标签是短词，内容是整句。
+% 提供    ：\DeckListTable \DeckListHead
+% 依赖    ：\DeckCourseRule（primitives.tex）、\DeckTableLeading（风格）
+% 参数    ：表体写成 `标签 & 长文字 \\` 的形式，交给 \DeckListTable
+% 容量    ：一页最多 8 行数据 + 表头
+%           文字列一行 = \SlideLineUnitsSafe - 9 个全角字
+%           （标签列固定宽度 + 列间距，扣掉 9 个字宽）
+% 易错    ：① 与 T3 的列宽方向不同，**不能混用**：
+%             本模板是"标签窄左 + 文字占满左对齐"。
+%             长文字用 T3 会被右对齐得零碎，还可能溢出列宽
+%           ② 表宽自动等于 \linewidth，不要手写固定宽度
+%           ③ 标签越短越好（2~4 字）。标签一长，文字列能装的字骤减
+%
+% 【填满的样子】
+%   \DeckListTable{%
+%     \DeckListHead{年份}{事项}%
+%     \DeckCourseRule
+%     2023 & 完成第一版组件集，覆盖七种常见排法 \\
+%     2024 & 引入本地记忆层与吸收机制 \\
+%   }
+% ============================================================
+
+% --- 列表式两列表：「窄标签左 + 长文字占满左对齐」---
+% 年份 + 描述、时间线这类内容用这个，
+% 否则描述会被右对齐得零碎，且长条目会溢出列宽。
+\DeckDefine{\DeckListTable}[1]{%
+  \par\noindent
+  {\SlideTextFont
+   \setlength{\baselineskip}{\DeckTableLeading}%
+   \setlength{\tabcolsep}{0pt}%
+   \renewcommand{\arraystretch}{1.0}%
+   \noindent
+   \begin{tabularx}{\linewidth}{@{}l@{\hspace{0.55cm}}>{\raggedright\arraybackslash}X@{}}
+     #1
+   \end{tabularx}}%
+  \par
+}
+
+% --- 表头行：与正文同字号，只靠加粗区分 ---
+\DeckDefine{\DeckListHead}[2]{%
+  \textbf{#1} & \textbf{#2} \\[0.04cm]
+}

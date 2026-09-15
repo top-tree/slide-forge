@@ -1,0 +1,53 @@
+% ============================================================
+% templates/t08-cover.tex   —— T8 封面（两种）
+%
+% 适用场景：deck 的第一页。**挑哪一种由需求决定**：
+%           需要署名（个人介绍、求职、答辩）→ 用 \DeckCover
+%           不需要署名（内部技术汇报、组会、论文串讲）→ 用 \DeckCoverPlain
+%           汇报人是谁在会议室里是已知信息，写上去只是占地方。
+% 提供    ：\DeckCover \DeckCoverPlain
+% 依赖    ：\DeckBare（primitives.tex）、\SlideCoverFont（风格）
+% 参数    ：见下面各自的注释
+% 容量    ：主标题一行。封面档字号约是正文的两倍多，所以一行大约只装
+%           得下正文的一半字数 —— 约 19 个全角字。
+%           超了会折行并把副标题挤下去。**太长就把标题写短，不要缩小字号**
+%           （字号档位是全局纪律，没有第四档）
+% 易错    ：① \SlideCoverFont 只允许出现在封面与致谢页。正文页想要
+%             "大一点的字"请用 \textbf，不要借用封面档
+%           ② 副标题不需要就传 {}，别写空格 ——
+%             判断空参用的是 \ifx\relax#2\relax
+%
+% 【填满的样子 —— 署名版】
+%   \vfill
+%   \DeckCover{基于模板库的幻灯片排版方法}{张三\\某某大学　计算机学院}
+%   \vfill
+%
+% 【填满的样子 —— 只有标题版】
+%   \vfill
+%   \DeckCoverPlain{项目进展汇报}{}
+%   \vfill
+% ============================================================
+
+% --- 带署名的封面 ---
+% #1 主标题（deck 名）#2 署名块（姓名 + 单位 / 身份，可多行用 \\ 分隔）
+\DeckDefine{\DeckCover}[2]{%
+  \begin{center}%
+    {\SlideCoverFont\bfseries\color{SlideAccent}#1}\par
+    \vspace{0.90cm}%
+    {\SlideTextFont #2}\par
+  \end{center}%
+}
+
+% --- 只有标题的封面 ---
+% #1 主标题 #2 副标题（可留空）
+% 整页只有一行标题时，这页的视觉重量全部落在"标题被放在哪儿"上，
+% 加"汇报人 / 单位 / 日期"这类抬头只会把它挤偏。
+\DeckDefine{\DeckCoverPlain}[2]{%
+  \begin{center}%
+    {\SlideCoverFont\bfseries\color{SlideAccent}#1}\par
+    \ifx\relax#2\relax\else
+      \vspace{0.50cm}%
+      {\SlideTextFont #2}\par
+    \fi
+  \end{center}%
+}

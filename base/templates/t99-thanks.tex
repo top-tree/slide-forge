@@ -1,0 +1,29 @@
+% ============================================================
+% templates/t99-thanks.tex   —— T99 致谢页
+%
+% 适用场景：deck 的最后一页。
+% 提供    ：\DeckThanks
+% 依赖    ：\DeckBare（primitives.tex）、\SlideCoverFont（风格）
+% 参数    ：#1 主文字（通常"谢谢"）#2 补充行（可留空：联系方式、日期）
+% 容量    ：主文字一行（封面档字号，约 19 个全角字）
+%           补充行一行（正文档，约 \SlideLineUnitsSafe 个全角字）
+% 易错    ：这页不要页标题 —— \DeckBare 已经把它清空了。
+%           不要在这页加表格或图，致谢页塞东西就不像致谢页了
+%
+% 【填满的样子】
+%   \vfill
+%   \DeckThanks{谢谢}{zhangsan@example.com}
+%   \vfill
+% ============================================================
+
+% --- 致谢页 ---
+% #1 主文字 #2 补充行（可留空）
+\DeckDefine{\DeckThanks}[2]{%
+  \begin{center}%
+    {\SlideCoverFont\bfseries\color{SlideAccent}#1}\par
+    \ifx\relax#2\relax\else
+      \vspace{0.90cm}%
+      {\SlideTextFont #2}\par
+    \fi
+  \end{center}%
+}

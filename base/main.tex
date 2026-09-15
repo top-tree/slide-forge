@@ -1,0 +1,45 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+% ------------------------------------------------------------
+% main.tex    页面清单
+%
+% 编译：XeLaTeX（不需要 shell-escape）
+% TeXStudio 命令：xelatex -synctex=1 -interaction=nonstopmode %.tex
+%
+% 这个文件只回答两件事：deck 的页面几何、有哪几页按什么顺序。
+%   - 加一页：加一行 \DeckSlide{标题}{pages/NN-name.tex}
+%   - 换顺序：调换行的位置
+%   - 换风格：改 .slide-forge/config.tex 里那一行，不要动这里
+%   - 改内容：只改 pages/*.tex
+%
+% 只改当前这一页时，可把其余 \DeckSlide 注释掉，编译会明显变快。
+%
+% ★ 编译时 cwd 必须是本目录（<deck>/slide/）—— 下面所有的 \input
+%   都是相对路径，TeX 按当前工作目录解析。换个目录跑会停在
+%   "File `.slide-forge/config.tex' not found"。
+% ------------------------------------------------------------
+
+\documentclass[aspectratio=169,11pt]{ctexbeamer}
+
+% .slide-forge/ 是本 deck 的记忆：工具箱 + 风格 + 版式，全部在本地，
+% 编译时一行都不指向 skill 目录。
+\input{.slide-forge/config.tex}
+
+\begin{document}
+
+% ---- 封面与致谢页：用 \DeckBare（无页标题），文件里用 \vfill 撑开居中 ----
+% 这两个文件要自己建（pages/ 是内容，不由 skill 提供）：
+%
+%   pages/00-cover.tex     内容按 templates/t08-cover.tex 头部注释里的
+%                          "填满的样子"来写：\vfill / \DeckCover{...}{...} / \vfill
+%   pages/99-thanks.tex    \vfill / \DeckThanks{谢谢}{} / \vfill
+
+\DeckBare{pages/00-cover.tex}{c}
+
+% ---- 正文页从这里开始，一个文件一页，顺序即页码顺序 ----
+% \DeckSlide{页面标题}{pages/01-first.tex}
+% \DeckSlide{页面标题}{pages/02-second.tex}
+
+\DeckBare{pages/99-thanks.tex}{c}
+
+\end{document}

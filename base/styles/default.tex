@@ -1,0 +1,186 @@
+% ============================================================
+% styles/default.tex   —— 极简学术（出厂风格）
+%
+% 【这是什么】一套风格的**全部定义**，一个自包含文件。换风格就是换这一个文件。
+%
+% 【分两层，都在本文件里】
+%   前半：**值** —— 颜色、字体、字号、版心、间距。改长相就改这些。
+%   末尾：**量** —— 用上面的值实测出"一行几个字、一页几行"。
+%         换任何值，容量自动跟着变，不需要改别的地方。
+%
+%   为什么"量"也在本文件里：几何要用当前字体量字宽，**没有字体量不出来**。
+%   所以尺子必须坐在参数后面。把它单独拆一个文件，就会变成
+%   "primitives 和 styles 两个根汇合到 geometry"的菱形依赖。
+%   放在这里，依赖就是一条直线：primitives → styles → templates。
+%   **加新风格时：复制本文件，改前面的值，末尾那段原样保留。**
+%
+% 【必须定义的名字 —— 缺一个都会在编译时报 Undefined control sequence】
+%   颜色      SlideInk  SlideAccent  SlideBG
+%   字体      \setCJKsansfont{} \setsansfont{}
+%   字号      \SlideTitleFont  \SlideTextFont  \SlideCoverFont
+%   版心      \SlideMargin
+%   垂直节奏  \SlideBodyTopSkip \DeckRowSkip \DeckBlockSkip
+%   尺寸      \DeckTagWidth \DeckTableLeading \DeckRuleHeight
+%   容量      \SlideMaxRows \SlideLineUnitSlack
+% ============================================================
+
+% ============================================================
+% 一、颜色
+% ------------------------------------------------------------
+% 正文一律黑色，页标题用强调色；全篇不使用斜体
+% （中文没有真斜体字形，合成倾斜会发虚）。
+% 要强调某个词时用 \textbf 加粗，一句话里不要超过一处。
+% ============================================================
+\definecolor{SlideInk}{HTML}{14161A}       % 正文：近黑（唯一正文色）
+\definecolor{SlideAccent}{HTML}{26308F}    % 页标题：低饱和深靛蓝
+\definecolor{SlideBG}{HTML}{FBFAF7}        % 暖白背景
+
+\setbeamercolor{background canvas}{bg=SlideBG}
+\setbeamercolor{normal text}{fg=SlideInk,bg=SlideBG}
+\setbeamercolor{frametitle}{fg=SlideAccent,bg=SlideBG}
+\setbeamercolor{itemize item}{fg=SlideInk}
+\setbeamercolor{itemize subitem}{fg=SlideInk}
+\setbeamercolor{structure}{fg=SlideAccent}
+
+% ============================================================
+% 二、字体
+% ------------------------------------------------------------
+% 中文：微软雅黑　西文与数字：Segoe UI
+% 微软雅黑没有真斜体，所以全篇不使用 \emph / \textit。
+% 可用字重只有 Regular 与 Bold 两档 —— 正好对应"正文 / 强调"。
+% ============================================================
+\setCJKsansfont{Microsoft YaHei}
+\setsansfont{Segoe UI}
+\renewcommand{\familydefault}{\sfdefault}
+
+% ============================================================
+% 三、字号与行距（全篇只有三级）
+% ------------------------------------------------------------
+% 页标题档 / 正文档 / 封面档。正文里的一切（含姓名、单位、要点）
+% 都用 \SlideTextFont，不存在第四级字号。
+% 每一级的第二个数字就是行距，不再另外设 \linespread。
+% ============================================================
+\newcommand{\SlideTitleFont}{\fontsize{20}{26}\selectfont}  % 页标题档
+\newcommand{\SlideTextFont}{\fontsize{12}{17}\selectfont}   % 正文档（唯一）
+
+% 封面档：只用于封面与致谢页的主标题——封面上的标题如果和正文一样大
+% 就不成其为封面。但它只出现在这两页，正文页一律不用。
+\newcommand{\SlideCoverFont}{\fontsize{26}{32}\selectfont}
+
+\setbeamerfont{frametitle}{size=\SlideTitleFont,series=\bfseries}
+\setbeamerfont{normal text}{size=\SlideTextFont,series=\mdseries}
+\setbeamerfont{itemize/enumerate body}{size=\SlideTextFont,series=\mdseries}
+
+% ============================================================
+% 四、版心
+% ------------------------------------------------------------
+% 页标题左上角对齐，无分隔线、无页脚、无导航符号。
+% 整份 deck 靠它对齐。
+% ============================================================
+\newlength{\SlideMargin}
+\setlength{\SlideMargin}{0.90cm}
+
+\setbeamersize{text margin left=\SlideMargin,text margin right=\SlideMargin}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{}
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip%
+  \vspace*{0.50cm}%
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=\SlideMargin,rightskip=\SlideMargin,ht=0.72cm,dp=0.06cm]{frametitle}%
+    \usebeamerfont{frametitle}\insertframetitle%
+  \end{beamercolorbox}%
+}
+
+% ============================================================
+% 五、垂直节奏与尺寸
+% ------------------------------------------------------------
+% 所有间距都用 \vspace*（带星号）：普通 \vspace 出现在段落起点时
+% 会被 TeX 在换页处丢弃，结果就是"设了间距却没生效"。
+% ============================================================
+\newlength{\SlideBodyTopSkip}
+\setlength{\SlideBodyTopSkip}{0.40cm}   % 页标题到正文第一行
+
+\newlength{\DeckRowSkip}
+\setlength{\DeckRowSkip}{0.30cm}        % 同组条目之间
+
+\newlength{\DeckBlockSkip}
+\setlength{\DeckBlockSkip}{0.40cm}      % 换组的留白（唯一分组手段）
+
+\newlength{\DeckTagWidth}
+\setlength{\DeckTagWidth}{5.6em}        % T2 标签列宽，约容纳 5 个全角字符
+
+\newlength{\DeckTableLeading}
+\setlength{\DeckTableLeading}{\baselineskip}   % 表格行距，可逐页覆盖
+
+\newlength{\DeckRuleHeight}
+\setlength{\DeckRuleHeight}{0.4pt}      % 表格表头下那条细线
+
+% ============================================================
+% 六、页面与导航、段落与列表基线
+% ============================================================
+\usetheme{default}
+\usefonttheme{professionalfonts}
+\usepackage{tabularx}   % 表格用它让表宽自适应 \linewidth
+\usepackage{graphicx}   % 图片页
+
+% 列表不用符号，改用悬挂缩进：某条折行时第二行与首行文字左对齐，
+% 条目边界依然清楚。圆点在 12pt 下要么发灰、要么与基线打架。
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\leftmargini}{0pt}
+\setbeamertemplate{itemize item}{}
+\setbeamertemplate{itemize subitem}{}
+\setbeamertemplate{itemize/enumerate body begin}{\SlideTextFont}
+
+% ============================================================
+% 七、容量：审美上限（设计判断，不是算出来的）
+% ------------------------------------------------------------
+% 下面两个数是**留过余量的推荐值**，不是几何上限。
+% 几何硬上限由本文件末尾那段实测得出，注释里记着：
+%   本风格下 = 一行 37 个全角字、一页 8 行 \DeckLine
+%
+% ★ 必须满足：推荐值 ≤ 实测硬上限，否则会把内容挤出去。
+%   改了字号之后要重新实测一次（做法见 SKILL.md 第八部分），
+%   别看编译通过就算完。
+% ============================================================
+\newcommand{\SlideMaxRows}{6}           % 一页推荐行数（硬上限 8）
+\newcommand{\SlideLineUnitSlack}{7}     % 一行留几个字的余量（37 - 7 = 30）
+
+% ============================================================
+% 八、量：用上面的值实测出容量
+% ------------------------------------------------------------
+% 这一节**每个风格文件都长一样**，加新风格时原样保留，不要改。
+% 它必须在文件最末尾 —— 上面所有值都定好了才量得准。
+%
+% 容量分两类，别混：
+%   【几何上限】物理上最多塞多少。下面实测得出。
+%   【审美上限】"看起来还舒服"的推荐值。在本文件第七节，是设计判断。
+% 实测标定（本风格：正文 12pt / 行距 17pt / 版心 404pt）：
+%   一行：36 个全角字放得下，38 个折行 → 硬上限 37
+%   一页：8 行 \DeckLine 放得下，9 行起报 overfull 并开始裁行
+% 两个数不一样是正常的，不是矛盾。
+% ============================================================
+
+% --- 版心宽度：实际内容宽度 ---
+\newlength{\SlideTextWidth}
+\setlength{\SlideTextWidth}{\textwidth}
+
+% --- 正文区可用高度：页面高 - 标题区 - 上下留白 ---
+% 实测标定：这个公式算出的值与本风格下"能放下 8 行"吻合
+\newlength{\SlideTextHeight}
+\setlength{\SlideTextHeight}{\dimexpr\paperheight-2.45cm\relax}
+
+% --- 一个全角字有多宽：实测，不猜 ---
+% 用 \settowidth 量当前字体下的实际字宽 —— 这就是"尺子必须在参数后面"
+% 的原因：换个字号，这个宽度就变了，容量跟着变。
+\newlength{\SlideUnitWidth}
+\settowidth{\SlideUnitWidth}{国}
+
+% --- 一行最多几个全角字（几何硬上限，折行临界值）---
+\newcommand{\SlideLineUnits}{%
+  \the\numexpr\SlideTextWidth/\SlideUnitWidth\relax}
+
+% --- 一行建议几个全角字（审美值：硬上限减去第七节定的余量）---
+\newcommand{\SlideLineUnitsSafe}{%
+  \the\numexpr\SlideTextWidth/\SlideUnitWidth-\SlideLineUnitSlack\relax}
